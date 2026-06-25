@@ -15,12 +15,11 @@
       color: #1A3550;
     }
 
-    .container { max-width: 640px; margin: 0 auto; }
+    .container { max-width: 480px; margin: 0 auto; }
 
-    .page-header { margin-bottom: 24px; }
-    .page-header-top {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
-    }
+    /* ── Header ── */
+    .page-header { margin-bottom: 20px; }
+    .page-header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
     .page-header h1 { font-size: 20px; font-weight: 900; color: #1A3550; letter-spacing: -0.5px; }
     .admin-badge {
       font-size: 10.5px; font-weight: 800;
@@ -31,60 +30,141 @@
 
     /* ── Card ── */
     .card {
-      background: #FFFFFF;
-      border-radius: 18px;
-      padding: 22px 20px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 22px 20px 24px;
       box-shadow: 0 4px 20px rgba(60,120,180,0.09);
       margin-bottom: 14px;
     }
     .card-title {
       font-size: 13.5px; font-weight: 800; color: #1A3550;
-      letter-spacing: -0.2px; margin-bottom: 16px;
-      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 16px; display: flex; align-items: center; gap: 6px;
     }
 
-    /* ── Date add row ── */
-    .add-row { display: flex; gap: 8px; margin-bottom: 14px; }
-    .date-input {
-      flex: 1; padding: 11px 14px;
-      border: 1.5px solid #C8DFF0;
-      border-radius: 12px; font-size: 14px; color: #1A3550;
-      background: #F8FBFF; outline: none;
-      transition: border-color 0.15s; -webkit-appearance: none;
+    /* ── Calendar (admin) ── */
+    .cal-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 4px;
     }
-    .date-input:focus { border-color: #7BBEE0; background: #fff; }
-    .btn-add {
-      padding: 11px 18px; border: none; border-radius: 12px;
+    .hd-left, .hd-right { display: flex; align-items: center; gap: 6px; }
+    .cal-year, .cal-ko {
+      font-size: 12px; font-weight: 600; color: #9ABACC; letter-spacing: 0.2px;
+    }
+    .nav-btn {
+      background: none; border: none; font-size: 22px;
+      cursor: pointer; color: #7BBEE0; line-height: 1;
+      padding: 2px 4px; border-radius: 6px; transition: background 0.15s;
+    }
+    .nav-btn:hover { background: #EBF5FF; }
+
+    .cal-month-en {
+      font-size: 36px; font-weight: 900; color: #1A3550;
+      letter-spacing: -1.5px; text-align: center;
+      line-height: 1.1; margin: 2px 0 12px;
+    }
+    .cal-divider {
+      border: none; border-top: 1.5px solid #E8F0F8; margin-bottom: 12px;
+    }
+
+    /* weekdays */
+    .weekdays {
+      display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 6px;
+    }
+    .wd {
+      text-align: center; font-size: 11px; font-weight: 700;
+      color: #9ABACC; padding: 2px 0 5px; letter-spacing: 0.3px;
+    }
+    .wd.sun { color: #E08080; }
+    .wd.sat { color: #7BBEE0; }
+
+    /* days grid */
+    .days-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 5px;
+    }
+    .day-cell {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 2px;
+    }
+    .day-circle {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600;
+      cursor: default; transition: transform 0.1s, background 0.1s;
+      position: relative;
+    }
+
+    /* past — faded, not clickable */
+    .day-cell.past .day-circle { color: #D0DDE8; font-weight: 400; }
+
+    /* future unselected — light blue, clickable */
+    .day-cell.future .day-circle {
+      background: #EBF5FF; color: #5A80A0; cursor: pointer;
+    }
+    .day-cell.future .day-circle:hover {
+      background: #C8E4F5; transform: scale(1.08);
+    }
+
+    /* selected (available) — yellow, clickable */
+    .day-cell.selected .day-circle {
       background: #FFF176; color: #5C4400;
-      font-size: 13.5px; font-weight: 800;
-      cursor: pointer; transition: background 0.15s; white-space: nowrap;
+      cursor: pointer; font-weight: 900;
+      box-shadow: 0 2px 8px rgba(255,210,0,0.28);
     }
-    .btn-add:hover { background: #FFE500; }
+    .day-cell.selected .day-circle:hover {
+      background: #FFE500; transform: scale(1.08);
+    }
+    /* check badge on selected */
+    .day-cell.selected .day-circle::after {
+      content: '✓';
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 14px; height: 14px;
+      background: #7BBEE0;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 8px;
+      font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 14px; text-align: center;
+    }
 
-    /* ── Tags ── */
-    .date-tags { display: flex; flex-wrap: wrap; gap: 8px; min-height: 32px; }
-    .date-tag {
-      display: flex; align-items: center; gap: 6px;
+    /* today ring */
+    .day-cell.is-today .day-circle {
+      outline: 2.5px solid #7BBEE0; outline-offset: 2px;
+    }
+
+    /* sunday color */
+    .day-cell.is-sun.future .day-circle  { color: #D09090; }
+    .day-cell.is-sun.past .day-circle    { color: #E8C8C8; }
+
+    /* ── 선택 요약 ── */
+    .sel-summary {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: #F6FAFF;
+      border-radius: 12px;
+      font-size: 12.5px;
+      color: #5A80A0;
+      line-height: 1.6;
+    }
+    .sel-summary strong { color: #1A3550; font-weight: 800; }
+    .sel-list {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px;
+    }
+    .sel-chip {
       background: #FFF9C4; color: #5C4400;
       border: 1.5px solid #FFE500;
-      border-radius: 20px; padding: 5px 10px 5px 13px;
-      font-size: 13px; font-weight: 700;
+      border-radius: 20px; padding: 3px 10px;
+      font-size: 11.5px; font-weight: 700;
     }
-    .tag-remove {
-      background: none; border: none; cursor: pointer;
-      color: #B0900A; font-size: 15px; line-height: 1;
-      padding: 0 2px; border-radius: 50%;
-      transition: color 0.15s, background 0.15s;
-    }
-    .tag-remove:hover { color: #D04040; background: rgba(208,64,64,0.08); }
-    .empty-tag-msg { font-size: 13px; color: #A8C4D8; padding: 4px 0; }
+    .sel-empty { color: #A8C4D8; font-size: 12.5px; }
 
-    /* ── Save ── */
+    /* ── 저장 버튼 ── */
     .btn-save {
-      width: 100%; padding: 13px; border: none; border-radius: 12px;
+      width: 100%; padding: 14px; border: none; border-radius: 12px;
       background: #7BBEE0; color: #fff;
-      font-size: 15px; font-weight: 800; cursor: pointer;
-      transition: background 0.15s; margin-top: 16px; letter-spacing: -0.2px;
+      font-size: 15px; font-weight: 900; cursor: pointer;
+      transition: background 0.15s; margin-top: 14px; letter-spacing: -0.2px;
     }
     .btn-save:hover:not(:disabled) { background: #5BADE0; }
     .btn-save:disabled { background: #B0D8F0; cursor: not-allowed; }
@@ -93,7 +173,13 @@
       color: #7BBEE0; margin-top: 8px; height: 16px;
     }
 
-    /* ── Reservation table ── */
+    /* 안내 */
+    .cal-hint {
+      text-align: center; font-size: 11.5px; color: #A8C4D8;
+      margin-top: 12px; line-height: 1.6;
+    }
+
+    /* ── 예약 현황 ── */
     .res-summary { font-size: 12px; color: #8AAABF; margin-bottom: 14px; }
     .res-summary strong { color: #1A3550; }
 
@@ -101,13 +187,11 @@
     th {
       font-size: 11px; font-weight: 700; color: #8AAABF;
       text-align: left; padding: 0 8px 10px;
-      border-bottom: 1.5px solid #EDF4FA;
-      letter-spacing: 0.3px;
+      border-bottom: 1.5px solid #EDF4FA; letter-spacing: 0.3px;
     }
     td {
       font-size: 13px; color: #1A3550;
-      padding: 11px 8px; border-bottom: 1px solid #F2F8FC;
-      vertical-align: middle;
+      padding: 11px 8px; border-bottom: 1px solid #F2F8FC; vertical-align: middle;
     }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: #F6FAFD; }
@@ -119,13 +203,11 @@
       font-size: 12px; font-weight: 800; display: inline-block;
     }
     .time-cell { color: #A8C4D8; font-size: 12px; }
-
     .btn-del {
       background: none; border: 1.5px solid #D8E8F4;
       color: #C06060; font-size: 12px; font-weight: 700;
       padding: 4px 10px; border-radius: 8px;
-      cursor: pointer; transition: background 0.15s, border-color 0.15s;
-      white-space: nowrap;
+      cursor: pointer; transition: background 0.15s;
     }
     .btn-del:hover { background: #FDE8E8; border-color: #C06060; }
 
@@ -133,11 +215,10 @@
       background: #F0F8FF; font-size: 12px; font-weight: 800;
       color: #5A80A0; padding: 7px 8px;
     }
-    .no-res {
+    .no-res, .loading-cell {
       text-align: center; padding: 28px 0;
       font-size: 14px; color: #B0C8DC;
     }
-    .loading-cell { text-align: center; padding: 28px 0; font-size: 13px; color: #A8C4D8; }
   </style>
 </head>
 <body>
@@ -148,19 +229,43 @@
       <h1>🏠 집들이 관리자</h1>
       <span class="admin-badge">ADMIN</span>
     </div>
-    <p>예약 가능 날짜를 설정하고 신청 현황을 확인하세요</p>
+    <p>날짜를 클릭해서 예약 가능 날짜를 설정하세요</p>
   </div>
 
-  <!-- 날짜 설정 -->
+  <!-- 날짜 설정 카드 -->
   <div class="card">
     <div class="card-title">📅 예약 가능 날짜 설정</div>
-    <div class="add-row">
-      <input type="date" class="date-input" id="datePickerInput" />
-      <button class="btn-add" id="addDateBtn">+ 추가</button>
+
+    <div class="cal-header">
+      <div class="hd-left">
+        <button class="nav-btn" id="prevBtn">&#8249;</button>
+        <span class="cal-year" id="calYear"></span>
+      </div>
+      <div class="hd-right">
+        <span class="cal-ko" id="calKo"></span>
+        <button class="nav-btn" id="nextBtn">&#8250;</button>
+      </div>
     </div>
-    <div class="date-tags" id="dateTags">
-      <span class="empty-tag-msg">불러오는 중…</span>
+
+    <div class="cal-month-en" id="calMonthEn"></div>
+    <hr class="cal-divider" />
+
+    <div class="weekdays">
+      <div class="wd sun">SUN</div>
+      <div class="wd">MON</div><div class="wd">TUE</div>
+      <div class="wd">WED</div><div class="wd">THU</div>
+      <div class="wd">FRI</div><div class="wd sat">SAT</div>
     </div>
+
+    <div class="days-grid" id="daysGrid"></div>
+
+    <div class="cal-hint">
+      노란 동그라미 = 선택됨 &nbsp;|&nbsp; 하늘색 동그라미 = 미선택<br>날짜를 클릭해서 토글하세요
+    </div>
+
+    <!-- 선택 현황 요약 -->
+    <div class="sel-summary" id="selSummary"></div>
+
     <button class="btn-save" id="saveBtn">저장하기</button>
     <div class="save-notice" id="saveNotice"></div>
   </div>
@@ -172,10 +277,7 @@
     <table>
       <thead>
         <tr>
-          <th>날짜</th>
-          <th>이름</th>
-          <th>신청 시각</th>
-          <th></th>
+          <th>날짜</th><th>이름</th><th>신청 시각</th><th></th>
         </tr>
       </thead>
       <tbody id="resBody">
@@ -201,14 +303,22 @@
   });
   const db = getFirestore(app);
 
-  let availDates   = [];
-  let reservations = [];
+  const MONTHS_EN = ['January','February','March','April','May','June',
+                     'July','August','September','October','November','December'];
+  const MONTHS_KO = ['1월','2월','3월','4월','5월','6월',
+                     '7월','8월','9월','10월','11월','12월'];
 
+  const today = new Date(); today.setHours(0,0,0,0);
+  let viewYear    = today.getFullYear();
+  let viewMonth   = today.getMonth();
+  let selectedDates = new Set();   // 선택된 날짜 Set
+  let reservations  = [];
+
+  /* ── 초기 로드 ── */
   async function loadAll() {
     const cfgSnap = await getDoc(doc(db, 'settings', 'config'));
-    availDates = cfgSnap.exists() ? [...(cfgSnap.data().availableDates || [])] : [];
-    availDates.sort();
-    renderTags();
+    selectedDates = new Set(cfgSnap.exists() ? (cfgSnap.data().availableDates || []) : []);
+    renderCalendar();
 
     const resSnap = await getDocs(collection(db, 'reservations'));
     reservations = [];
@@ -223,41 +333,95 @@
     renderReservations();
   }
 
-  function renderTags() {
-    const wrap = document.getElementById('dateTags');
-    if (availDates.length === 0) {
-      wrap.innerHTML = '<span class="empty-tag-msg">추가된 날짜가 없어요. 날짜를 선택해 추가해주세요.</span>';
-      return;
+  /* ── 캘린더 렌더 ── */
+  function renderCalendar() {
+    document.getElementById('calYear').textContent    = viewYear + '년';
+    document.getElementById('calKo').textContent      = MONTHS_KO[viewMonth];
+    document.getElementById('calMonthEn').textContent = MONTHS_EN[viewMonth].toUpperCase();
+
+    const grid = document.getElementById('daysGrid');
+    grid.innerHTML = '';
+
+    const firstWd   = new Date(viewYear, viewMonth, 1).getDay();
+    const totalDays = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+    for (let i = 0; i < firstWd; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'day-cell';
+      const circle = document.createElement('div');
+      circle.className = 'day-circle';
+      cell.appendChild(circle);
+      grid.appendChild(cell);
     }
-    wrap.innerHTML = '';
-    availDates.forEach(dt => {
-      const tag = document.createElement('div');
-      tag.className = 'date-tag';
-      tag.innerHTML = `${fmtKo(dt)} <button class="tag-remove" data-date="${dt}" title="삭제">✕</button>`;
-      wrap.appendChild(tag);
-    });
-    wrap.querySelectorAll('.tag-remove').forEach(btn => {
-      btn.addEventListener('click', () => {
-        availDates = availDates.filter(d => d !== btn.dataset.date);
-        renderTags();
-      });
-    });
+
+    for (let d = 1; d <= totalDays; d++) {
+      const dateStr = `${viewYear}-${pad(viewMonth+1)}-${pad(d)}`;
+      const dateObj = new Date(viewYear, viewMonth, d);
+      const isToday    = dateObj.getTime() === today.getTime();
+      const isPast     = dateObj < today;
+      const isSelected = selectedDates.has(dateStr);
+      const isSun      = dateObj.getDay() === 0;
+
+      const cell   = document.createElement('div');
+      const circle = document.createElement('div');
+      circle.className = 'day-circle';
+      circle.textContent = d;
+
+      let cellClass = 'day-cell';
+      if (isSun) cellClass += ' is-sun';
+      if (isToday) cellClass += ' is-today';
+
+      if (isPast) {
+        cellClass += ' past';
+      } else if (isSelected) {
+        cellClass += ' selected';
+        circle.addEventListener('click', () => toggleDate(dateStr));
+      } else {
+        cellClass += ' future';
+        circle.addEventListener('click', () => toggleDate(dateStr));
+      }
+
+      cell.className = cellClass;
+      cell.appendChild(circle);
+      grid.appendChild(cell);
+    }
+
+    renderSummary();
   }
 
-  document.getElementById('addDateBtn').addEventListener('click', () => {
-    const val = document.getElementById('datePickerInput').value;
-    if (!val) return;
-    if (availDates.includes(val)) { alert('이미 추가된 날짜예요!'); return; }
-    availDates.push(val); availDates.sort();
-    renderTags();
-    document.getElementById('datePickerInput').value = '';
-  });
+  /* ── 날짜 토글 ── */
+  function toggleDate(dateStr) {
+    if (selectedDates.has(dateStr)) {
+      selectedDates.delete(dateStr);
+    } else {
+      selectedDates.add(dateStr);
+    }
+    renderCalendar();
+  }
 
+  /* ── 선택 요약 렌더 ── */
+  function renderSummary() {
+    const wrap = document.getElementById('selSummary');
+    const sorted = [...selectedDates].sort();
+    if (sorted.length === 0) {
+      wrap.innerHTML = '<span class="sel-empty">선택된 날짜가 없어요. 캘린더에서 날짜를 클릭해주세요.</span>';
+      return;
+    }
+    const chips = sorted.map(dt => {
+      const [y, m, d] = dt.split('-');
+      return `<span class="sel-chip">${Number(m)}/${Number(d)}</span>`;
+    }).join('');
+    wrap.innerHTML = `<strong>총 ${sorted.length}개 선택됨</strong><div class="sel-list">${chips}</div>`;
+  }
+
+  /* ── 저장 ── */
   document.getElementById('saveBtn').addEventListener('click', async () => {
     const btn = document.getElementById('saveBtn');
     btn.disabled = true; btn.textContent = '저장 중…';
     try {
-      await setDoc(doc(db, 'settings', 'config'), { availableDates: availDates });
+      await setDoc(doc(db, 'settings', 'config'), {
+        availableDates: [...selectedDates].sort()
+      });
       btn.textContent = '저장하기'; btn.disabled = false;
       const n = document.getElementById('saveNotice');
       n.textContent = '✓ 저장 완료!';
@@ -269,6 +433,17 @@
     }
   });
 
+  /* ── 네비게이션 ── */
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+    renderCalendar();
+  });
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+    renderCalendar();
+  });
+
+  /* ── 예약 현황 ── */
   function renderReservations() {
     document.getElementById('resSummary').innerHTML =
       `총 <strong>${reservations.length}명</strong> 신청`;
@@ -311,6 +486,8 @@
     } catch(err) { console.error(err); alert('삭제 중 오류가 발생했어요.'); }
   }
 
+  /* ── 유틸 ── */
+  function pad(n) { return String(n).padStart(2,'0'); }
   function fmtKo(dateStr) {
     const [y, m, d] = dateStr.split('-');
     return `${y}년 ${Number(m)}월 ${Number(d)}일`;
