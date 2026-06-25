@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🏠 집들이 관리자</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background: #EBF5FF;
+      min-height: 100vh;
+      padding: 32px 16px 64px;
+      color: #1A3550;
+    }
+
+    .container { max-width: 640px; margin: 0 auto; }
+
+    .page-header { margin-bottom: 24px; }
+    .page-header-top {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+    }
+    .page-header h1 { font-size: 20px; font-weight: 900; color: #1A3550; letter-spacing: -0.5px; }
+    .admin-badge {
+      font-size: 10.5px; font-weight: 800;
+      background: #7BBEE0; color: #fff;
+      padding: 3px 9px; border-radius: 20px; letter-spacing: 0.4px;
+    }
+    .page-header p { font-size: 12.5px; color: #7A9AB8; }
+
+    /* ── Card ── */
+    .card {
+      background: #FFFFFF;
+      border-radius: 18px;
+      padding: 22px 20px;
+      box-shadow: 0 4px 20px rgba(60,120,180,0.09);
+      margin-bottom: 14px;
+    }
+    .card-title {
+      font-size: 13.5px; font-weight: 800; color: #1A3550;
+      letter-spacing: -0.2px; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* ── Date add row ── */
+    .add-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .date-input {
+      flex: 1; padding: 11px 14px;
+      border: 1.5px solid #C8DFF0;
+      border-radius: 12px; font-size: 14px; color: #1A3550;
+      background: #F8FBFF; outline: none;
+      transition: border-color 0.15s; -webkit-appearance: none;
+    }
+    .date-input:focus { border-color: #7BBEE0; background: #fff; }
+    .btn-add {
+      padding: 11px 18px; border: none; border-radius: 12px;
+      background: #FFF176; color: #5C4400;
+      font-size: 13.5px; font-weight: 800;
+      cursor: pointer; transition: background 0.15s; white-space: nowrap;
+    }
+    .btn-add:hover { background: #FFE500; }
+
+    /* ── Tags ── */
+    .date-tags { display: flex; flex-wrap: wrap; gap: 8px; min-height: 32px; }
+    .date-tag {
+      display: flex; align-items: center; gap: 6px;
+      background: #FFF9C4; color: #5C4400;
+      border: 1.5px solid #FFE500;
+      border-radius: 20px; padding: 5px 10px 5px 13px;
+      font-size: 13px; font-weight: 700;
+    }
+    .tag-remove {
+      background: none; border: none; cursor: pointer;
+      color: #B0900A; font-size: 15px; line-height: 1;
+      padding: 0 2px; border-radius: 50%;
+      transition: color 0.15s, background 0.15s;
+    }
+    .tag-remove:hover { color: #D04040; background: rgba(208,64,64,0.08); }
+    .empty-tag-msg { font-size: 13px; color: #A8C4D8; padding: 4px 0; }
+
+    /* ── Save ── */
+    .btn-save {
+      width: 100%; padding: 13px; border: none; border-radius: 12px;
+      background: #7BBEE0; color: #fff;
+      font-size: 15px; font-weight: 800; cursor: pointer;
+      transition: background 0.15s; margin-top: 16px; letter-spacing: -0.2px;
+    }
+    .btn-save:hover:not(:disabled) { background: #5BADE0; }
+    .btn-save:disabled { background: #B0D8F0; cursor: not-allowed; }
+    .save-notice {
+      text-align: center; font-size: 12px;
+      color: #7BBEE0; margin-top: 8px; height: 16px;
+    }
+
+    /* ── Reservation table ── */
+    .res-summary { font-size: 12px; color: #8AAABF; margin-bottom: 14px; }
+    .res-summary strong { color: #1A3550; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      font-size: 11px; font-weight: 700; color: #8AAABF;
+      text-align: left; padding: 0 8px 10px;
+      border-bottom: 1.5px solid #EDF4FA;
+      letter-spacing: 0.3px;
+    }
+    td {
+      font-size: 13px; color: #1A3550;
+      padding: 11px 8px; border-bottom: 1px solid #F2F8FC;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #F6FAFD; }
+
+    .date-pill {
+      background: #FFF9C4; color: #5C4400;
+      border: 1.5px solid #FFE500;
+      padding: 3px 9px; border-radius: 20px;
+      font-size: 12px; font-weight: 800; display: inline-block;
+    }
+    .time-cell { color: #A8C4D8; font-size: 12px; }
+
+    .btn-del {
+      background: none; border: 1.5px solid #D8E8F4;
+      color: #C06060; font-size: 12px; font-weight: 700;
+      padding: 4px 10px; border-radius: 8px;
+      cursor: pointer; transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-del:hover { background: #FDE8E8; border-color: #C06060; }
+
+    .group-row td {
+      background: #F0F8FF; font-size: 12px; font-weight: 800;
+      color: #5A80A0; padding: 7px 8px;
+    }
+    .no-res {
+      text-align: center; padding: 28px 0;
+      font-size: 14px; color: #B0C8DC;
+    }
+    .loading-cell { text-align: center; padding: 28px 0; font-size: 13px; color: #A8C4D8; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <div class="page-header-top">
+      <h1>🏠 집들이 관리자</h1>
+      <span class="admin-badge">ADMIN</span>
+    </div>
+    <p>예약 가능 날짜를 설정하고 신청 현황을 확인하세요</p>
+  </div>
+
+  <!-- 날짜 설정 -->
+  <div class="card">
+    <div class="card-title">📅 예약 가능 날짜 설정</div>
+    <div class="add-row">
+      <input type="date" class="date-input" id="datePickerInput" />
+      <button class="btn-add" id="addDateBtn">+ 추가</button>
+    </div>
+    <div class="date-tags" id="dateTags">
+      <span class="empty-tag-msg">불러오는 중…</span>
+    </div>
+    <button class="btn-save" id="saveBtn">저장하기</button>
+    <div class="save-notice" id="saveNotice"></div>
+  </div>
+
+  <!-- 예약 현황 -->
+  <div class="card">
+    <div class="card-title">📋 예약 현황</div>
+    <div class="res-summary" id="resSummary">불러오는 중…</div>
+    <table>
+      <thead>
+        <tr>
+          <th>날짜</th>
+          <th>이름</th>
+          <th>신청 시각</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="resBody">
+        <tr><td colspan="4" class="loading-cell">불러오는 중…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, doc, getDoc, setDoc, deleteDoc }
+    from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey:            "AIzaSyAf8KRhogRh52tboq67n_B-H3GVMrPEJa0",
+    authDomain:        "comemysweethome.firebaseapp.com",
+    projectId:         "comemysweethome",
+    storageBucket:     "comemysweethome.firebasestorage.app",
+    messagingSenderId: "754422293006",
+    appId:             "1:754422293006:web:5229bb6d7525cba559925f"
+  });
+  const db = getFirestore(app);
+
+  let availDates   = [];
+  let reservations = [];
+
+  async function loadAll() {
+    const cfgSnap = await getDoc(doc(db, 'settings', 'config'));
+    availDates = cfgSnap.exists() ? [...(cfgSnap.data().availableDates || [])] : [];
+    availDates.sort();
+    renderTags();
+
+    const resSnap = await getDocs(collection(db, 'reservations'));
+    reservations = [];
+    resSnap.forEach(d => {
+      const data = d.data();
+      reservations.push({ id: d.id, date: data.date, name: data.name, createdAt: data.createdAt });
+    });
+    reservations.sort((a, b) => {
+      if (a.date !== b.date) return a.date.localeCompare(b.date);
+      return (a.createdAt?.seconds||0) - (b.createdAt?.seconds||0);
+    });
+    renderReservations();
+  }
+
+  function renderTags() {
+    const wrap = document.getElementById('dateTags');
+    if (availDates.length === 0) {
+      wrap.innerHTML = '<span class="empty-tag-msg">추가된 날짜가 없어요. 날짜를 선택해 추가해주세요.</span>';
+      return;
+    }
+    wrap.innerHTML = '';
+    availDates.forEach(dt => {
+      const tag = document.createElement('div');
+      tag.className = 'date-tag';
+      tag.innerHTML = `${fmtKo(dt)} <button class="tag-remove" data-date="${dt}" title="삭제">✕</button>`;
+      wrap.appendChild(tag);
+    });
+    wrap.querySelectorAll('.tag-remove').forEach(btn => {
+      btn.addEventListener('click', () => {
+        availDates = availDates.filter(d => d !== btn.dataset.date);
+        renderTags();
+      });
+    });
+  }
+
+  document.getElementById('addDateBtn').addEventListener('click', () => {
+    const val = document.getElementById('datePickerInput').value;
+    if (!val) return;
+    if (availDates.includes(val)) { alert('이미 추가된 날짜예요!'); return; }
+    availDates.push(val); availDates.sort();
+    renderTags();
+    document.getElementById('datePickerInput').value = '';
+  });
+
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true; btn.textContent = '저장 중…';
+    try {
+      await setDoc(doc(db, 'settings', 'config'), { availableDates: availDates });
+      btn.textContent = '저장하기'; btn.disabled = false;
+      const n = document.getElementById('saveNotice');
+      n.textContent = '✓ 저장 완료!';
+      setTimeout(() => { n.textContent = ''; }, 2500);
+    } catch(err) {
+      console.error(err);
+      btn.textContent = '저장하기'; btn.disabled = false;
+      alert('저장 중 오류가 발생했어요.');
+    }
+  });
+
+  function renderReservations() {
+    document.getElementById('resSummary').innerHTML =
+      `총 <strong>${reservations.length}명</strong> 신청`;
+    const tbody = document.getElementById('resBody');
+    if (reservations.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" class="no-res">아직 예약이 없어요 ☁️</td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    let lastDate = null;
+    reservations.forEach(res => {
+      if (res.date !== lastDate) {
+        lastDate = res.date;
+        const cnt = reservations.filter(r => r.date === res.date).length;
+        const gr = document.createElement('tr');
+        gr.className = 'group-row';
+        gr.innerHTML = `<td colspan="4">📅 ${fmtKo(res.date)} — ${cnt}명</td>`;
+        tbody.appendChild(gr);
+      }
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="date-pill">${res.date}</span></td>
+        <td>${esc(res.name)}</td>
+        <td class="time-cell">${fmtTime(res.createdAt)}</td>
+        <td><button class="btn-del" data-id="${res.id}">삭제</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('.btn-del').forEach(btn => {
+      btn.addEventListener('click', () => delRes(btn.dataset.id));
+    });
+  }
+
+  async function delRes(id) {
+    if (!confirm('이 예약을 삭제할까요?')) return;
+    try {
+      await deleteDoc(doc(db, 'reservations', id));
+      reservations = reservations.filter(r => r.id !== id);
+      renderReservations();
+    } catch(err) { console.error(err); alert('삭제 중 오류가 발생했어요.'); }
+  }
+
+  function fmtKo(dateStr) {
+    const [y, m, d] = dateStr.split('-');
+    return `${y}년 ${Number(m)}월 ${Number(d)}일`;
+  }
+  function fmtTime(ts) {
+    if (!ts) return '—';
+    const dt = ts.toDate ? ts.toDate() : new Date(ts.seconds * 1000);
+    const p = n => String(n).padStart(2,'0');
+    return `${dt.getFullYear()}.${p(dt.getMonth()+1)}.${p(dt.getDate())} ${p(dt.getHours())}:${p(dt.getMinutes())}`;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  loadAll();
+</script>
+</body>
+</html>
