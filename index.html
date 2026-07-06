@@ -6,336 +6,91 @@
   <title>🏠 집들이 예약</title>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-      background: #EBF5FF;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 32px 16px 56px;
+      background: #EBF5FF; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; padding: 32px 16px 56px;
     }
+    .site-header { text-align: center; margin-bottom: 24px; }
+    .site-header h1 { font-size: 18px; font-weight: 800; color: #1A3550; letter-spacing: -0.3px; }
+    .site-header p  { margin-top: 5px; font-size: 12.5px; color: #6B90B0; line-height: 1.6; }
 
-    /* ── Header ── */
-    .site-header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .site-header h1 {
-      font-size: 18px;
-      font-weight: 800;
-      color: #1A3550;
-      letter-spacing: -0.3px;
-    }
-    .site-header p {
-      margin-top: 5px;
-      font-size: 12.5px;
-      color: #6B90B0;
-      line-height: 1.6;
-    }
+    .card { background: #fff; border-radius: 20px; padding: 24px 20px 28px; width: 100%; max-width: 400px; box-shadow: 0 4px 24px rgba(60,120,180,0.10); }
 
-    /* ── Card ── */
-    .card {
-      background: #FFFFFF;
-      border-radius: 20px;
-      padding: 24px 20px 28px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 4px 24px rgba(60,120,180,0.10);
-    }
-
-    /* ── Calendar header (reference style) ── */
-    .cal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 4px;
-    }
-    .hd-left, .hd-right {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .cal-year, .cal-ko {
-      font-size: 12px;
-      font-weight: 600;
-      color: #9ABACC;
-      letter-spacing: 0.2px;
-    }
-    .nav-btn {
-      background: none;
-      border: none;
-      font-size: 22px;
-      cursor: pointer;
-      color: #7BBEE0;
-      line-height: 1;
-      padding: 2px 4px;
-      border-radius: 6px;
-      transition: background 0.15s;
-    }
+    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .hd-left, .hd-right { display: flex; align-items: center; gap: 6px; }
+    .cal-year, .cal-ko { font-size: 12px; font-weight: 600; color: #9ABACC; }
+    .nav-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #7BBEE0; padding: 2px 4px; border-radius: 6px; transition: background 0.15s; }
     .nav-btn:hover { background: #EBF5FF; }
+    .cal-month-en { font-size: 38px; font-weight: 900; color: #1A3550; letter-spacing: -1.5px; text-align: center; line-height: 1.1; margin: 2px 0 14px; }
+    .cal-divider { border: none; border-top: 1.5px solid #E8F0F8; margin-bottom: 14px; }
 
-    .cal-month-en {
-      font-size: 38px;
-      font-weight: 900;
-      color: #1A3550;
-      letter-spacing: -1.5px;
-      text-align: center;
-      line-height: 1.1;
-      margin: 2px 0 14px;
-    }
+    .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 6px; }
+    .wd { text-align: center; font-size: 11px; font-weight: 700; color: #9ABACC; padding: 2px 0 6px; }
+    .wd.sun { color: #E08080; } .wd.sat { color: #7BBEE0; }
 
-    .cal-divider {
-      border: none;
-      border-top: 1.5px solid #E8F0F8;
-      margin-bottom: 14px;
-    }
-
-    /* ── Weekday row ── */
-    .weekdays {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      margin-bottom: 6px;
-    }
-    .wd {
-      text-align: center;
-      font-size: 11px;
-      font-weight: 700;
-      color: #9ABACC;
-      padding: 2px 0 6px;
-      letter-spacing: 0.3px;
-    }
-    .wd.sun { color: #E08080; }
-    .wd.sat { color: #7BBEE0; }
-
-    /* ── Days grid ── */
-    .days-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      row-gap: 6px;
-    }
-
-    .day-cell {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-
+    .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 6px; }
+    .day-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; }
     .day-circle {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 700;
-      color: #B0C8DC;
-      cursor: default;
-      transition: transform 0.12s;
-      position: relative;
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; cursor: default;
+      transition: transform 0.12s; position: relative;
     }
 
-    /* Sunday text color */
-    .day-cell.is-sun .day-circle { color: #E8A8A8; }
+    /* 지난 날짜 */
+    .day-cell.past .day-circle { color: #D0DDE8; font-weight: 400; }
+    /* 일반 날짜 */
+    .day-cell.other .day-circle { color: #B0C8DC; }
 
-    /* Past dates — faded */
-    .day-cell.past .day-circle { color: #D0DDE8; font-weight: 500; }
+    /* 예약 가능 — 노란 동그라미 */
+    .day-cell.avail .day-circle { background: #FFF176; color: #5C4400; cursor: pointer; font-weight: 900; box-shadow: 0 2px 8px rgba(255,210,0,0.25); }
+    .day-cell.avail .day-circle:hover { background: #FFE500; transform: scale(1.10); }
+    .day-cell.avail .res-count { font-size: 9.5px; font-weight: 700; color: #7BBEE0; }
 
-    /* Available — yellow circle */
-    .day-cell.available .day-circle {
-      background: #FFF176;
-      color: #5C4400;
-      cursor: pointer;
-      font-weight: 800;
-      box-shadow: 0 2px 8px rgba(255,210,0,0.25);
-    }
-    .day-cell.available .day-circle:hover {
-      background: #FFE500;
-      transform: scale(1.10);
-    }
+    /* 마감 — 주황 동그라미, 클릭 불가 */
+    .day-cell.closed .day-circle { background: #FFD090; color: #8A5000; font-weight: 900; cursor: not-allowed; }
+    .day-cell.closed .closed-label { font-size: 9.5px; font-weight: 800; color: #C06000; }
 
-    /* Today — sky blue ring on top */
-    .day-cell.is-today .day-circle {
-      outline: 2.5px solid #7BBEE0;
-      outline-offset: 2px;
-    }
-    .day-cell.is-today.available .day-circle {
-      outline: 2.5px solid #7BBEE0;
-    }
+    /* 오늘 링 */
+    .day-cell.is-today .day-circle { outline: 2.5px solid #7BBEE0; outline-offset: 2px; }
 
-    /* Reservation count badge */
-    .day-count {
-      font-size: 9.5px;
-      font-weight: 700;
-      color: #7BBEE0;
-      line-height: 1;
-    }
+    /* 범례 */
+    .legend { display: flex; gap: 14px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+    .leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #8AAABF; }
+    .leg-circle { width: 16px; height: 16px; border-radius: 50%; }
+    .lc-avail  { background: #FFF176; box-shadow: 0 1px 4px rgba(255,210,0,0.3); }
+    .lc-closed { background: #FFD090; }
+    .lc-today  { background: transparent; outline: 2px solid #7BBEE0; outline-offset: 1px; }
 
-    /* ── Legend ── */
-    .legend {
-      display: flex;
-      gap: 14px;
-      justify-content: center;
-      margin-top: 18px;
-      flex-wrap: wrap;
-    }
-    .leg-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      color: #8AAABF;
-    }
-    .leg-circle {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-    }
-    .lc-avail { background: #FFF176; box-shadow: 0 1px 4px rgba(255,210,0,0.3); }
-    .lc-today { background: transparent; outline: 2px solid #7BBEE0; outline-offset: 1px; }
-    .lc-none  { background: #E8F0F8; }
+    /* 로딩 / 빈 상태 */
+    .status-msg { grid-column: 1/-1; text-align: center; padding: 28px 0; font-size: 13px; color: #A0BACC; }
 
-    /* loading */
-    .loading-msg {
-      grid-column: 1/-1;
-      text-align: center;
-      padding: 28px 0;
-      font-size: 13px;
-      color: #A0BACC;
-    }
-
-    /* ── Modal (bottom sheet) ── */
-    .overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(20, 40, 70, 0.38);
-      z-index: 200;
-      align-items: flex-end;
-      justify-content: center;
-    }
+    /* 모달 */
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(20,40,70,0.38); z-index: 200; align-items: flex-end; justify-content: center; }
     .overlay.open { display: flex; }
+    .modal { background: #fff; border-radius: 24px 24px 0 0; padding: 28px 24px 40px; width: 100%; max-width: 480px; box-shadow: 0 -6px 32px rgba(60,120,180,0.12); animation: slideUp 0.22s ease-out; }
+    @keyframes slideUp { from{transform:translateY(80px);opacity:0} to{transform:translateY(0);opacity:1} }
 
-    .modal {
-      background: #FFFFFF;
-      border-radius: 24px 24px 0 0;
-      padding: 28px 24px 40px;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 -6px 32px rgba(60,120,180,0.12);
-      animation: slideUp 0.22s ease-out;
-    }
-    @keyframes slideUp {
-      from { transform: translateY(80px); opacity: 0; }
-      to   { transform: translateY(0);   opacity: 1; }
-    }
-
-    .modal-eyebrow {
-      font-size: 11px;
-      font-weight: 700;
-      color: #7BBEE0;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-    .modal-title {
-      font-size: 22px;
-      font-weight: 900;
-      color: #1A3550;
-      letter-spacing: -0.5px;
-      margin-bottom: 4px;
-    }
-    .modal-sub {
-      font-size: 13px;
-      color: #8AAABF;
-      margin-bottom: 22px;
-      line-height: 1.5;
-    }
-    .field label {
-      display: block;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: #5A80A0;
-      margin-bottom: 6px;
-      letter-spacing: 0.3px;
-    }
-    .field input {
-      width: 100%;
-      padding: 13px 16px;
-      border: 1.5px solid #D0E4F0;
-      border-radius: 12px;
-      font-size: 16px;
-      color: #1A3550;
-      background: #F8FBFF;
-      outline: none;
-      transition: border-color 0.15s;
-      -webkit-appearance: none;
-    }
+    .modal-eyebrow { font-size: 11px; font-weight: 700; color: #7BBEE0; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
+    .modal-title   { font-size: 22px; font-weight: 900; color: #1A3550; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .modal-sub     { font-size: 13px; color: #8AAABF; margin-bottom: 22px; line-height: 1.5; }
+    .field label   { display: block; font-size: 11.5px; font-weight: 700; color: #5A80A0; margin-bottom: 6px; }
+    .field input   { width: 100%; padding: 13px 16px; border: 1.5px solid #D0E4F0; border-radius: 12px; font-size: 16px; color: #1A3550; background: #F8FBFF; outline: none; transition: border-color 0.15s; -webkit-appearance: none; }
     .field input:focus { border-color: #7BBEE0; background: #fff; }
     .field input.err   { border-color: #E08080; }
-
-    .modal-btns {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .btn-back {
-      padding: 14px 20px;
-      border: 1.5px solid #D0E4F0;
-      border-radius: 12px;
-      background: #fff;
-      color: #8AAABF;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-    }
+    .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-back    { padding: 14px 20px; border: 1.5px solid #D0E4F0; border-radius: 12px; background: #fff; color: #8AAABF; font-size: 15px; font-weight: 600; cursor: pointer; }
     .btn-back:hover { background: #F0F8FF; }
-    .btn-reserve {
-      flex: 1;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      background: #7BBEE0;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-      letter-spacing: -0.2px;
-    }
+    .btn-reserve { flex: 1; padding: 14px; border: none; border-radius: 12px; background: #7BBEE0; color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; transition: background 0.15s, transform 0.1s; }
     .btn-reserve:hover:not(:disabled) { background: #5BADE0; }
     .btn-reserve:active:not(:disabled) { transform: scale(0.97); }
     .btn-reserve:disabled { background: #B0D8F0; cursor: not-allowed; }
 
-    .success-view {
-      text-align: center;
-      padding: 8px 0;
-    }
-    .success-view .s-circle {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: #FFF176;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 14px;
-      font-size: 34px;
-    }
-    .success-view h3 {
-      font-size: 20px;
-      font-weight: 900;
-      color: #1A3550;
-      margin-bottom: 8px;
-    }
-    .success-view p {
-      font-size: 13.5px;
-      color: #8AAABF;
-      line-height: 1.7;
-    }
+    .success-view { text-align: center; padding: 8px 0; }
+    .success-view .s-circle { width: 72px; height: 72px; border-radius: 50%; background: #FFF176; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 34px; }
+    .success-view h3 { font-size: 20px; font-weight: 900; color: #1A3550; margin-bottom: 8px; }
+    .success-view p  { font-size: 13.5px; color: #8AAABF; line-height: 1.7; }
 
     @media (min-width: 480px) {
       .overlay { align-items: center; padding: 16px; }
@@ -344,14 +99,12 @@
   </style>
 </head>
 <body>
-
   <div class="site-header">
     <h1>🏠 집들이 예약</h1>
-    <p>노란 동그라미 날짜를 눌러 방문 날짜를 예약해주세요<br>같은 날 여러 명 신청 가능해요!</p>
+    <p>노란 날짜를 눌러 방문 날짜를 예약해주세요<br>같은 날 여러 명 신청 가능해요!</p>
   </div>
 
   <div class="card">
-    <!-- 헤더 row: ← 2026년 ... 6월 → -->
     <div class="cal-header">
       <div class="hd-left">
         <button class="nav-btn" id="prevBtn">&#8249;</button>
@@ -362,216 +115,200 @@
         <button class="nav-btn" id="nextBtn">&#8250;</button>
       </div>
     </div>
-
-    <!-- 큰 영어 월 이름 -->
     <div class="cal-month-en" id="calMonthEn"></div>
-
     <hr class="cal-divider" />
-
-    <!-- 요일 헤더 -->
     <div class="weekdays">
-      <div class="wd sun">SUN</div>
-      <div class="wd">MON</div>
-      <div class="wd">TUE</div>
-      <div class="wd">WED</div>
-      <div class="wd">THU</div>
-      <div class="wd">FRI</div>
-      <div class="wd sat">SAT</div>
+      <div class="wd sun">SUN</div><div class="wd">MON</div><div class="wd">TUE</div>
+      <div class="wd">WED</div><div class="wd">THU</div><div class="wd">FRI</div><div class="wd sat">SAT</div>
     </div>
-
-    <!-- 날짜 그리드 -->
     <div class="days-grid" id="daysGrid">
-      <div class="loading-msg">불러오는 중…</div>
+      <div class="status-msg">불러오는 중…</div>
     </div>
-
-    <!-- 범례 -->
     <div class="legend">
-      <div class="leg-item">
-        <div class="leg-circle lc-avail"></div>예약 가능
-      </div>
-      <div class="leg-item">
-        <div class="leg-circle lc-today"></div>오늘
-      </div>
-      <div class="leg-item">
-        <div class="leg-circle lc-none"></div>예약 불가
-      </div>
+      <div class="leg-item"><div class="leg-circle lc-avail"></div>예약 가능</div>
+      <div class="leg-item"><div class="leg-circle lc-closed"></div>마감</div>
+      <div class="leg-item"><div class="leg-circle lc-today"></div>오늘</div>
     </div>
   </div>
 
-  <!-- 예약 모달 -->
   <div class="overlay" id="overlay">
     <div class="modal" id="modalBody"></div>
   </div>
 
-  <script type="module">
-    import { initializeApp }  from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, serverTimestamp }
-      from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+<script type="module">
+  import { initializeApp }  from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, getDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-    const app = initializeApp({
-      apiKey:            "AIzaSyAf8KRhogRh52tboq67n_B-H3GVMrPEJa0",
-      authDomain:        "comemysweethome.firebaseapp.com",
-      projectId:         "comemysweethome",
-      storageBucket:     "comemysweethome.firebasestorage.app",
-      messagingSenderId: "754422293006",
-      appId:             "1:754422293006:web:5229bb6d7525cba559925f"
-    });
-    const db = getFirestore(app);
+  const app = initializeApp({
+    apiKey:"AIzaSyAf8KRhogRh52tboq67n_B-H3GVMrPEJa0", authDomain:"comemysweethome.firebaseapp.com",
+    projectId:"comemysweethome", storageBucket:"comemysweethome.firebasestorage.app",
+    messagingSenderId:"754422293006", appId:"1:754422293006:web:5229bb6d7525cba559925f"
+  });
+  const db = getFirestore(app);
 
-    const MONTHS_EN = ['January','February','March','April','May','June',
-                       'July','August','September','October','November','December'];
-    const MONTHS_KO = ['1월','2월','3월','4월','5월','6월',
-                       '7월','8월','9월','10월','11월','12월'];
+  const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MONTHS_KO = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
-    const today = new Date(); today.setHours(0,0,0,0);
-    let viewYear  = today.getFullYear();
-    let viewMonth = today.getMonth();
-    let availSet  = new Set();
-    let countMap  = {};
-    let pickedDate = null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  let viewYear  = today.getFullYear();
+  let viewMonth = today.getMonth();
+  let availSet  = new Set();
+  let closedSet = new Set();
+  let countMap  = {};
+  let pickedDate = null;
 
-    async function loadData() {
+  async function loadData() {
+    try {
       const cfgSnap = await getDoc(doc(db, 'settings', 'config'));
-      availSet = new Set(cfgSnap.exists() ? (cfgSnap.data().availableDates || []) : []);
+      if (cfgSnap.exists()) {
+        availSet  = new Set(cfgSnap.data().availableDates || []);
+        closedSet = new Set(cfgSnap.data().closedDates   || []);
+      }
       const resSnap = await getDocs(collection(db, 'reservations'));
       countMap = {};
       resSnap.forEach(d => {
         const dt = d.data().date;
         countMap[dt] = (countMap[dt] || 0) + 1;
       });
-      renderCalendar();
+    } catch(e) {
+      console.error('Firebase 로드 오류:', e);
+    }
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    document.getElementById('calYear').textContent    = viewYear + '년';
+    document.getElementById('calKo').textContent      = MONTHS_KO[viewMonth];
+    document.getElementById('calMonthEn').textContent = MONTHS_EN[viewMonth].toUpperCase();
+
+    const grid = document.getElementById('daysGrid');
+    grid.innerHTML = '';
+
+    const firstWd   = new Date(viewYear, viewMonth, 1).getDay();
+    const totalDays = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+    for (let i = 0; i < firstWd; i++) {
+      const c = document.createElement('div'); c.className = 'day-cell';
+      c.appendChild(Object.assign(document.createElement('div'), {className:'day-circle'}));
+      grid.appendChild(c);
     }
 
-    function renderCalendar() {
-      document.getElementById('calYear').textContent   = viewYear + '년';
-      document.getElementById('calKo').textContent     = MONTHS_KO[viewMonth];
-      document.getElementById('calMonthEn').textContent = MONTHS_EN[viewMonth].toUpperCase();
+    for (let d = 1; d <= totalDays; d++) {
+      const ds      = `${viewYear}-${pad(viewMonth+1)}-${pad(d)}`;
+      const dateObj = new Date(viewYear, viewMonth, d);
+      const isToday = dateObj.getTime() === today.getTime();
+      const isPast  = dateObj < today;
+      const isAvail = availSet.has(ds);
+      const isClosed= closedSet.has(ds);
+      const cnt     = countMap[ds] || 0;
+      const isSun   = dateObj.getDay() === 0;
 
-      const grid = document.getElementById('daysGrid');
-      grid.innerHTML = '';
+      const cell   = document.createElement('div');
+      const circle = document.createElement('div');
+      circle.className  = 'day-circle';
+      circle.textContent = d;
 
-      const firstWd   = new Date(viewYear, viewMonth, 1).getDay();
-      const totalDays = new Date(viewYear, viewMonth + 1, 0).getDate();
+      let cellClass = 'day-cell';
+      if (isSun)   cellClass += ' is-sun';
+      if (isToday) cellClass += ' is-today';
 
-      for (let i = 0; i < firstWd; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'day-cell';
-        const circle = document.createElement('div');
-        circle.className = 'day-circle';
-        cell.appendChild(circle);
-        grid.appendChild(cell);
-      }
+      if (isPast) {
+        cellClass += ' past';
 
-      for (let d = 1; d <= totalDays; d++) {
-        const dateStr = `${viewYear}-${pad(viewMonth+1)}-${pad(d)}`;
-        const dateObj = new Date(viewYear, viewMonth, d);
-        const isToday  = dateObj.getTime() === today.getTime();
-        const isPast   = dateObj < today;
-        const isAvail  = availSet.has(dateStr);
-        const cnt      = countMap[dateStr] || 0;
-        const isSun    = dateObj.getDay() === 0;
-
-        const cell = document.createElement('div');
-        let cellClass = 'day-cell';
-        if (isSun) cellClass += ' is-sun';
-        if (isPast) cellClass += ' past';
-        if (isAvail && !isPast) cellClass += ' available';
-        if (isToday) cellClass += ' is-today';
+      } else if (isAvail && isClosed) {
+        // 마감 — 주황 동그라미
+        cellClass += ' closed';
         cell.className = cellClass;
-
-        const circle = document.createElement('div');
-        circle.className = 'day-circle';
-        circle.textContent = d;
-
-        if (isAvail && !isPast) {
-          circle.addEventListener('click', () => openModal(dateStr, d));
-        }
-
         cell.appendChild(circle);
+        const lbl = document.createElement('div');
+        lbl.className = 'closed-label'; lbl.textContent = '마감';
+        cell.appendChild(lbl);
+        grid.appendChild(cell); continue;
 
-        if (cnt > 0 && isAvail && !isPast) {
-          const countEl = document.createElement('div');
-          countEl.className = 'day-count';
-          countEl.textContent = cnt + '명';
-          cell.appendChild(countEl);
+      } else if (isAvail && !isClosed) {
+        // 예약 가능 — 노란 동그라미
+        cellClass += ' avail';
+        circle.addEventListener('click', () => openModal(ds, d));
+        cell.className = cellClass;
+        cell.appendChild(circle);
+        if (cnt > 0) {
+          const cEl = document.createElement('div');
+          cEl.className = 'res-count'; cEl.textContent = cnt + '명';
+          cell.appendChild(cEl);
         }
+        grid.appendChild(cell); continue;
 
-        grid.appendChild(cell);
+      } else {
+        cellClass += ' other';
       }
-    }
 
-    function openModal(dateStr, day) {
-      pickedDate = dateStr;
-      const mKo = MONTHS_KO[viewMonth];
+      cell.className = cellClass;
+      cell.appendChild(circle);
+      grid.appendChild(cell);
+    }
+  }
+
+  function openModal(ds, day) {
+    pickedDate = ds;
+    const mKo = MONTHS_KO[viewMonth];
+    document.getElementById('modalBody').innerHTML = `
+      <div class="modal-eyebrow">날짜 선택</div>
+      <div class="modal-title">${viewYear}년 ${mKo} ${day}일</div>
+      <div class="modal-sub">이름을 입력하고 예약을 완료해주세요 ☁️</div>
+      <div class="field">
+        <label>이름</label>
+        <input id="nameInput" type="text" placeholder="홍길동" maxlength="20" autocomplete="off" />
+      </div>
+      <div class="modal-btns">
+        <button class="btn-back" id="cancelBtn">취소</button>
+        <button class="btn-reserve" id="submitBtn">예약하기</button>
+      </div>
+    `;
+    document.getElementById('overlay').classList.add('open');
+    document.getElementById('cancelBtn').addEventListener('click', closeModal);
+    document.getElementById('submitBtn').addEventListener('click', doSubmit);
+    document.getElementById('nameInput').addEventListener('keydown', e => { if(e.key==='Enter') doSubmit(); });
+    setTimeout(() => document.getElementById('nameInput').focus(), 180);
+  }
+
+  function closeModal() {
+    document.getElementById('overlay').classList.remove('open');
+    pickedDate = null;
+  }
+
+  async function doSubmit() {
+    const inp  = document.getElementById('nameInput');
+    const name = inp.value.trim();
+    if (!name) { inp.classList.add('err'); inp.focus(); return; }
+    inp.classList.remove('err');
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.textContent = '예약 중…';
+    try {
+      await addDoc(collection(db, 'reservations'), { date: pickedDate, name, createdAt: serverTimestamp() });
+      countMap[pickedDate] = (countMap[pickedDate] || 0) + 1;
+      renderCalendar();
+      const [y,m,d] = pickedDate.split('-');
       document.getElementById('modalBody').innerHTML = `
-        <div class="modal-eyebrow">날짜 선택</div>
-        <div class="modal-title">${viewYear}년 ${mKo} ${day}일</div>
-        <div class="modal-sub">이름을 입력하고 예약을 완료해주세요 ☁️</div>
-        <div class="field">
-          <label>이름</label>
-          <input id="nameInput" type="text" placeholder="홍길동" maxlength="20" autocomplete="off" />
-        </div>
-        <div class="modal-btns">
-          <button class="btn-back" id="cancelBtn">취소</button>
-          <button class="btn-reserve" id="submitBtn">예약하기</button>
+        <div class="success-view">
+          <div class="s-circle">🎉</div>
+          <h3>예약 완료!</h3>
+          <p>${name}님,<br>${y}년 ${+m}월 ${+d}일<br>예약이 완료됐어요!<br>집들이에서 만나요 🏠</p>
         </div>
       `;
-      document.getElementById('overlay').classList.add('open');
-      document.getElementById('cancelBtn').addEventListener('click', closeModal);
-      document.getElementById('submitBtn').addEventListener('click', doSubmit);
-      document.getElementById('nameInput').addEventListener('keydown', e => { if(e.key==='Enter') doSubmit(); });
-      setTimeout(() => document.getElementById('nameInput').focus(), 180);
+      setTimeout(closeModal, 2800);
+    } catch(e) {
+      console.error(e); btn.disabled=false; btn.textContent='예약하기';
+      alert('오류가 발생했어요. 다시 시도해주세요.');
     }
+  }
 
-    function closeModal() {
-      document.getElementById('overlay').classList.remove('open');
-      pickedDate = null;
-    }
+  document.getElementById('prevBtn').addEventListener('click', () => { viewMonth--; if(viewMonth<0){viewMonth=11;viewYear--;} renderCalendar(); });
+  document.getElementById('nextBtn').addEventListener('click', () => { viewMonth++; if(viewMonth>11){viewMonth=0;viewYear++;} renderCalendar(); });
+  document.getElementById('overlay').addEventListener('click', e => { if(e.target===document.getElementById('overlay')) closeModal(); });
 
-    async function doSubmit() {
-      const inp  = document.getElementById('nameInput');
-      const name = inp.value.trim();
-      if (!name) { inp.classList.add('err'); inp.focus(); return; }
-      inp.classList.remove('err');
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true; btn.textContent = '예약 중…';
-      try {
-        await addDoc(collection(db, 'reservations'), {
-          date: pickedDate, name, createdAt: serverTimestamp()
-        });
-        countMap[pickedDate] = (countMap[pickedDate] || 0) + 1;
-        renderCalendar();
-        const [y, m, d] = pickedDate.split('-');
-        document.getElementById('modalBody').innerHTML = `
-          <div class="success-view">
-            <div class="s-circle">🎉</div>
-            <h3>예약 완료!</h3>
-            <p>${name}님,<br>${y}년 ${Number(m)}월 ${Number(d)}일<br>예약이 완료됐어요!<br>집들이에서 만나요 🏠</p>
-          </div>
-        `;
-        setTimeout(closeModal, 2800);
-      } catch(err) {
-        console.error(err);
-        btn.disabled = false; btn.textContent = '예약하기';
-        alert('오류가 발생했어요. 다시 시도해주세요.');
-      }
-    }
-
-    document.getElementById('prevBtn').addEventListener('click', () => {
-      viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
-      renderCalendar();
-    });
-    document.getElementById('nextBtn').addEventListener('click', () => {
-      viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; }
-      renderCalendar();
-    });
-    document.getElementById('overlay').addEventListener('click', e => {
-      if (e.target === document.getElementById('overlay')) closeModal();
-    });
-
-    function pad(n) { return String(n).padStart(2,'0'); }
-
-    loadData();
-  </script>
+  function pad(n) { return String(n).padStart(2,'0'); }
+  loadData();
+</script>
 </body>
 </html>
