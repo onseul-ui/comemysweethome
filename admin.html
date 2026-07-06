@@ -6,219 +6,127 @@
   <title>🏠 집들이 관리자</title>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-      background: #EBF5FF;
-      min-height: 100vh;
-      padding: 32px 16px 64px;
-      color: #1A3550;
+      background: #EBF5FF; min-height: 100vh; padding: 32px 16px 64px; color: #1A3550;
     }
-
     .container { max-width: 480px; margin: 0 auto; }
-
-    /* ── Header ── */
     .page-header { margin-bottom: 20px; }
     .page-header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-    .page-header h1 { font-size: 20px; font-weight: 900; color: #1A3550; letter-spacing: -0.5px; }
-    .admin-badge {
-      font-size: 10.5px; font-weight: 800;
-      background: #7BBEE0; color: #fff;
-      padding: 3px 9px; border-radius: 20px; letter-spacing: 0.4px;
-    }
+    .page-header h1 { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
+    .admin-badge { font-size: 10.5px; font-weight: 800; background: #7BBEE0; color: #fff; padding: 3px 9px; border-radius: 20px; }
     .page-header p { font-size: 12.5px; color: #7A9AB8; }
 
-    /* ── Card ── */
-    .card {
-      background: #fff;
-      border-radius: 20px;
-      padding: 22px 20px 24px;
-      box-shadow: 0 4px 20px rgba(60,120,180,0.09);
-      margin-bottom: 14px;
-    }
-    .card-title {
-      font-size: 13.5px; font-weight: 800; color: #1A3550;
-      margin-bottom: 16px; display: flex; align-items: center; gap: 6px;
-    }
+    .card { background: #fff; border-radius: 20px; padding: 22px 20px 24px; box-shadow: 0 4px 20px rgba(60,120,180,0.09); margin-bottom: 14px; }
+    .card-title { font-size: 13.5px; font-weight: 800; color: #1A3550; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
 
-    /* ── Calendar ── */
-    .cal-header {
-      display: flex; align-items: center;
-      justify-content: space-between; margin-bottom: 4px;
-    }
+    /* 캘린더 */
+    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
     .hd-left, .hd-right { display: flex; align-items: center; gap: 6px; }
     .cal-year, .cal-ko { font-size: 12px; font-weight: 600; color: #9ABACC; }
-    .nav-btn {
-      background: none; border: none; font-size: 22px;
-      cursor: pointer; color: #7BBEE0; line-height: 1;
-      padding: 2px 4px; border-radius: 6px; transition: background 0.15s;
-    }
+    .nav-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #7BBEE0; padding: 2px 4px; border-radius: 6px; transition: background 0.15s; }
     .nav-btn:hover { background: #EBF5FF; }
-    .cal-month-en {
-      font-size: 36px; font-weight: 900; color: #1A3550;
-      letter-spacing: -1.5px; text-align: center; line-height: 1.1; margin: 2px 0 12px;
-    }
+    .cal-month-en { font-size: 36px; font-weight: 900; color: #1A3550; letter-spacing: -1.5px; text-align: center; line-height: 1.1; margin: 2px 0 12px; }
     .cal-divider { border: none; border-top: 1.5px solid #E8F0F8; margin-bottom: 12px; }
 
     .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 6px; }
-    .wd {
-      text-align: center; font-size: 11px; font-weight: 700;
-      color: #9ABACC; padding: 2px 0 5px; letter-spacing: 0.3px;
-    }
-    .wd.sun { color: #E08080; }
-    .wd.sat { color: #7BBEE0; }
+    .wd { text-align: center; font-size: 11px; font-weight: 700; color: #9ABACC; padding: 2px 0 5px; }
+    .wd.sun { color: #E08080; } .wd.sat { color: #7BBEE0; }
 
     .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 5px; }
-
-    .day-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-
+    .day-cell { display: flex; flex-direction: column; align-items: center; gap: 1px; }
     .day-circle {
       width: 36px; height: 36px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 600;
-      cursor: default; transition: transform 0.1s, background 0.1s;
-      position: relative;
+      font-size: 13px; font-weight: 600; cursor: default;
+      transition: transform 0.1s, background 0.1s; position: relative;
     }
 
     /* 지난 날짜 */
     .day-cell.past .day-circle { color: #D0DDE8; font-weight: 400; }
 
-    /* 미래 미선택 — 하늘색, 클릭 가능 */
-    .day-cell.future .day-circle {
-      background: #EBF5FF; color: #5A80A0; cursor: pointer;
-    }
-    .day-cell.future .day-circle:hover { background: #C8E4F5; transform: scale(1.08); }
+    /* 미선택 (파랑) */
+    .day-cell.state-none .day-circle { background: #EBF5FF; color: #5A80A0; cursor: pointer; }
+    .day-cell.state-none .day-circle:hover { background: #C8E4F5; transform: scale(1.08); }
 
-    /* 선택됨 (예약 없음) — 노란색, 클릭 가능 */
-    .day-cell.selected .day-circle {
-      background: #FFF176; color: #5C4400;
-      cursor: pointer; font-weight: 900;
-      box-shadow: 0 2px 8px rgba(255,210,0,0.25);
-    }
-    .day-cell.selected .day-circle:hover { background: #FFE500; transform: scale(1.08); }
-    .day-cell.selected .day-circle::after {
-      content: '✓';
-      position: absolute; bottom: -1px; right: -1px;
-      width: 14px; height: 14px;
-      background: #7BBEE0; color: #fff;
-      border-radius: 50%; font-size: 8px; font-weight: 900;
-      display: flex; align-items: center; justify-content: center;
-      line-height: 14px; text-align: center;
-    }
+    /* 선택됨 + 열림 (노랑) */
+    .day-cell.state-open .day-circle { background: #FFF176; color: #5C4400; cursor: pointer; font-weight: 900; box-shadow: 0 2px 8px rgba(255,210,0,0.25); }
+    .day-cell.state-open .day-circle:hover { background: #FFE500; transform: scale(1.08); }
 
-    /* ★ 예약 있는 날짜 — 잠금, 클릭 불가 ★ */
-    .day-cell.reserved .day-circle {
-      background: #FFE0E0;
-      color: #A04040;
-      cursor: not-allowed;
-      font-weight: 900;
-      box-shadow: 0 2px 8px rgba(200,80,80,0.15);
-    }
-    .day-cell.reserved .day-circle::after {
-      content: '🔒';
-      position: absolute; bottom: -2px; right: -2px;
-      width: 15px; height: 15px;
-      background: #E06060; color: #fff;
-      border-radius: 50%; font-size: 8px;
-      display: flex; align-items: center; justify-content: center;
-      line-height: 15px; text-align: center;
-    }
-    .day-cell.reserved .res-badge {
-      font-size: 9.5px; font-weight: 700; color: #D06060; line-height: 1;
+    /* 선택됨 + 마감 (주황) */
+    .day-cell.state-closed .day-circle { background: #FFD090; color: #7A4200; cursor: pointer; font-weight: 900; box-shadow: 0 2px 8px rgba(255,160,0,0.2); }
+    .day-cell.state-closed .day-circle:hover { background: #FFBE60; transform: scale(1.08); }
+    .day-cell.state-closed .day-label { font-size: 9px; font-weight: 800; color: #C06000; }
+
+    /* 예약 있음 배지 */
+    .day-cell.has-res .day-circle::after {
+      content: '🔒'; position: absolute; bottom: -1px; right: -1px;
+      width: 14px; height: 14px; background: #E06060; color: #fff;
+      border-radius: 50%; font-size: 7px; display: flex;
+      align-items: center; justify-content: center; line-height: 14px;
     }
 
     /* 오늘 링 */
     .day-cell.is-today .day-circle { outline: 2.5px solid #7BBEE0; outline-offset: 2px; }
 
-    /* 일요일 색상 */
-    .day-cell.is-sun.future .day-circle { color: #D09090; }
-    .day-cell.is-sun.past .day-circle   { color: #E8C8C8; }
+    /* 범례 */
+    .legend { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .leg-item { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: #8AAABF; }
+    .leg-dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
+    .ld-none   { background: #EBF5FF; }
+    .ld-open   { background: #FFF176; }
+    .ld-closed { background: #FFD090; }
 
-    /* ── 범례 ── */
-    .legend {
-      display: flex; gap: 12px; flex-wrap: wrap;
-      margin-top: 14px; justify-content: center;
-    }
-    .leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #8AAABF; }
-    .leg-circle { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
-    .lc-sel      { background: #FFF176; box-shadow: 0 1px 4px rgba(255,210,0,0.3); }
-    .lc-future   { background: #EBF5FF; }
-    .lc-reserved { background: #FFE0E0; }
+    /* 안내 */
+    .hint { font-size: 11.5px; color: #9ABACC; margin-top: 10px; line-height: 1.7; text-align: center; }
 
-    /* ── 선택 요약 ── */
-    .sel-summary {
-      margin-top: 14px; padding: 12px 14px;
-      background: #F6FAFF; border-radius: 12px;
-      font-size: 12.5px; color: #5A80A0; line-height: 1.6;
+    /* 날짜별 마감 설정 리스트 */
+    .date-list { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .date-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; border-radius: 12px; background: #F6FAFF;
+      gap: 8px;
     }
-    .sel-summary strong { color: #1A3550; font-weight: 800; }
-    .sel-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-    .sel-chip {
-      background: #FFF9C4; color: #5C4400;
-      border: 1.5px solid #FFE500;
-      border-radius: 20px; padding: 3px 10px;
-      font-size: 11.5px; font-weight: 700;
-    }
-    .res-chip {
-      background: #FFE8E8; color: #A04040;
-      border: 1.5px solid #FFAAAA;
-      border-radius: 20px; padding: 3px 10px;
-      font-size: 11.5px; font-weight: 700;
-    }
-    .sel-empty { color: #A8C4D8; font-size: 12.5px; }
+    .date-row.row-open   { border: 1.5px solid #FFE500; background: #FFFDE8; }
+    .date-row.row-closed { border: 1.5px solid #FFB040; background: #FFF4E0; }
+    .date-row.row-locked { border: 1.5px solid #FFAAAA; background: #FFF0F0; }
 
-    /* ── 안내 박스 ── */
-    .hint-box {
-      background: #FFF8F0; border: 1.5px solid #FFD8B0;
-      border-radius: 10px; padding: 10px 13px;
-      font-size: 11.5px; color: #A07040; line-height: 1.7;
-      margin-top: 12px;
-    }
+    .row-label { font-size: 13px; font-weight: 700; color: #1A3550; flex: 1; }
+    .row-label.is-closed { text-decoration: line-through; color: #C08040; }
+    .row-cnt { font-size: 11.5px; color: #8AAABF; white-space: nowrap; }
+    .row-cnt.has-cnt { color: #C06060; font-weight: 700; }
 
-    /* ── 저장 ── */
-    .btn-save {
-      width: 100%; padding: 14px; border: none; border-radius: 12px;
-      background: #7BBEE0; color: #fff;
-      font-size: 15px; font-weight: 900; cursor: pointer;
-      transition: background 0.15s; margin-top: 14px; letter-spacing: -0.2px;
+    .btn-toggle {
+      border: none; border-radius: 8px; font-size: 12px; font-weight: 800;
+      padding: 5px 12px; cursor: pointer; transition: background 0.15s; white-space: nowrap;
     }
+    .btn-close-it  { background: #FFD090; color: #7A4200; }
+    .btn-close-it:hover  { background: #FFBE60; }
+    .btn-open-it   { background: #D4EDD8; color: #1A5C2A; }
+    .btn-open-it:hover   { background: #B8DFC0; }
+    .btn-locked    { background: #FFE0E0; color: #C06060; cursor: not-allowed; font-size: 11px; }
+
+    .empty-list { font-size: 13px; color: #A8C4D8; padding: 8px 0; text-align: center; }
+
+    /* 저장 */
+    .btn-save { width: 100%; padding: 14px; border: none; border-radius: 12px; background: #7BBEE0; color: #fff; font-size: 15px; font-weight: 900; cursor: pointer; transition: background 0.15s; margin-top: 16px; letter-spacing: -0.2px; }
     .btn-save:hover:not(:disabled) { background: #5BADE0; }
     .btn-save:disabled { background: #B0D8F0; cursor: not-allowed; }
     .save-notice { text-align: center; font-size: 12px; color: #7BBEE0; margin-top: 8px; height: 16px; }
 
-    /* ── 예약 현황 ── */
+    /* 예약 현황 */
     .res-summary { font-size: 12px; color: #8AAABF; margin-bottom: 14px; }
     .res-summary strong { color: #1A3550; }
     table { width: 100%; border-collapse: collapse; }
-    th {
-      font-size: 11px; font-weight: 700; color: #8AAABF;
-      text-align: left; padding: 0 8px 10px;
-      border-bottom: 1.5px solid #EDF4FA; letter-spacing: 0.3px;
-    }
-    td {
-      font-size: 13px; color: #1A3550;
-      padding: 11px 8px; border-bottom: 1px solid #F2F8FC; vertical-align: middle;
-    }
+    th { font-size: 11px; font-weight: 700; color: #8AAABF; text-align: left; padding: 0 8px 10px; border-bottom: 1.5px solid #EDF4FA; letter-spacing: 0.3px; }
+    td { font-size: 13px; color: #1A3550; padding: 10px 8px; border-bottom: 1px solid #F2F8FC; vertical-align: middle; }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: #F6FAFD; }
-    .date-pill {
-      background: #FFF9C4; color: #5C4400;
-      border: 1.5px solid #FFE500;
-      padding: 3px 9px; border-radius: 20px;
-      font-size: 12px; font-weight: 800; display: inline-block;
-    }
+    .date-pill { background: #FFF9C4; color: #5C4400; border: 1.5px solid #FFE500; padding: 3px 9px; border-radius: 20px; font-size: 12px; font-weight: 800; display: inline-block; }
     .time-cell { color: #A8C4D8; font-size: 12px; }
-    .btn-del {
-      background: none; border: 1.5px solid #D8E8F4;
-      color: #C06060; font-size: 12px; font-weight: 700;
-      padding: 4px 10px; border-radius: 8px; cursor: pointer;
-      transition: background 0.15s;
-    }
+    .btn-del { background: none; border: 1.5px solid #D8E8F4; color: #C06060; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 8px; cursor: pointer; }
     .btn-del:hover { background: #FDE8E8; border-color: #C06060; }
-    .group-row td {
-      background: #F0F8FF; font-size: 12px; font-weight: 800;
-      color: #5A80A0; padding: 7px 8px;
-    }
+    .group-row td { background: #F0F8FF; font-size: 12px; font-weight: 800; color: #5A80A0; padding: 7px 8px; }
     .no-res, .loading-cell { text-align: center; padding: 28px 0; font-size: 14px; color: #B0C8DC; }
   </style>
 </head>
@@ -230,12 +138,11 @@
       <h1>🏠 집들이 관리자</h1>
       <span class="admin-badge">ADMIN</span>
     </div>
-    <p>날짜를 클릭해서 예약 가능 날짜를 설정하세요</p>
+    <p>날짜 클릭 → 파랑(미선택) → 노랑(열림) → 주황(마감) 순으로 바뀌어요</p>
   </div>
 
-  <!-- 날짜 설정 -->
   <div class="card">
-    <div class="card-title">📅 예약 가능 날짜 설정</div>
+    <div class="card-title">📅 예약 날짜 & 마감 설정</div>
 
     <div class="cal-header">
       <div class="hd-left">
@@ -249,46 +156,33 @@
     </div>
     <div class="cal-month-en" id="calMonthEn"></div>
     <hr class="cal-divider" />
-
     <div class="weekdays">
-      <div class="wd sun">SUN</div>
-      <div class="wd">MON</div><div class="wd">TUE</div>
-      <div class="wd">WED</div><div class="wd">THU</div>
-      <div class="wd">FRI</div><div class="wd sat">SAT</div>
+      <div class="wd sun">SUN</div><div class="wd">MON</div><div class="wd">TUE</div>
+      <div class="wd">WED</div><div class="wd">THU</div><div class="wd">FRI</div><div class="wd sat">SAT</div>
     </div>
     <div class="days-grid" id="daysGrid"></div>
 
-    <!-- 범례 -->
     <div class="legend">
-      <div class="leg-item"><div class="leg-circle lc-sel"></div>선택됨</div>
-      <div class="leg-item"><div class="leg-circle lc-future"></div>미선택</div>
-      <div class="leg-item"><div class="leg-circle lc-reserved"></div>예약 있음 (잠금)</div>
+      <div class="leg-item"><div class="leg-dot ld-none"></div>미선택</div>
+      <div class="leg-item"><div class="leg-dot ld-open"></div>열림 (예약 가능)</div>
+      <div class="leg-item"><div class="leg-dot ld-closed"></div>마감</div>
+      <div class="leg-item">🔒 예약 있음</div>
     </div>
+    <div class="hint">한 번 탭 = 열림 &nbsp;|&nbsp; 두 번 탭 = 마감 &nbsp;|&nbsp; 세 번 탭 = 제거<br>(예약 있는 날짜는 제거 불가, 마감만 가능)</div>
 
-    <!-- 안내 -->
-    <div class="hint-box">
-      🔒 분홍색 날짜는 이미 예약 신청이 있어서 변경할 수 없어요.<br>
-      예약을 취소한 후 날짜를 수정할 수 있어요.
-    </div>
-
-    <!-- 선택 요약 -->
-    <div class="sel-summary" id="selSummary"></div>
+    <!-- 날짜별 마감 관리 -->
+    <div class="date-list" id="dateList"></div>
 
     <button class="btn-save" id="saveBtn">저장하기</button>
     <div class="save-notice" id="saveNotice"></div>
   </div>
 
-  <!-- 예약 현황 -->
   <div class="card">
     <div class="card-title">📋 예약 현황</div>
     <div class="res-summary" id="resSummary">불러오는 중…</div>
     <table>
-      <thead>
-        <tr><th>날짜</th><th>이름</th><th>신청 시각</th><th></th></tr>
-      </thead>
-      <tbody id="resBody">
-        <tr><td colspan="4" class="loading-cell">불러오는 중…</td></tr>
-      </tbody>
+      <thead><tr><th>날짜</th><th>이름</th><th>신청 시각</th><th></th></tr></thead>
+      <tbody id="resBody"><tr><td colspan="4" class="loading-cell">불러오는 중…</td></tr></tbody>
     </table>
   </div>
 
@@ -299,52 +193,41 @@
     from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
   const app = initializeApp({
-    apiKey:            "AIzaSyAf8KRhogRh52tboq67n_B-H3GVMrPEJa0",
-    authDomain:        "comemysweethome.firebaseapp.com",
-    projectId:         "comemysweethome",
-    storageBucket:     "comemysweethome.firebasestorage.app",
-    messagingSenderId: "754422293006",
-    appId:             "1:754422293006:web:5229bb6d7525cba559925f"
+    apiKey:"AIzaSyAf8KRhogRh52tboq67n_B-H3GVMrPEJa0", authDomain:"comemysweethome.firebaseapp.com",
+    projectId:"comemysweethome", storageBucket:"comemysweethome.firebasestorage.app",
+    messagingSenderId:"754422293006", appId:"1:754422293006:web:5229bb6d7525cba559925f"
   });
   const db = getFirestore(app);
 
-  const MONTHS_EN = ['January','February','March','April','May','June',
-                     'July','August','September','October','November','December'];
-  const MONTHS_KO = ['1월','2월','3월','4월','5월','6월',
-                     '7월','8월','9월','10월','11월','12월'];
+  const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MONTHS_KO = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
   const today = new Date(); today.setHours(0,0,0,0);
-  let viewYear      = today.getFullYear();
-  let viewMonth     = today.getMonth();
-  let selectedDates = new Set();  // 선택된 날짜
-  let reservedDates = new Map();  // 예약 있는 날짜 → 예약 수  ★
+  let viewYear  = today.getFullYear();
+  let viewMonth = today.getMonth();
+  let selectedDates = new Set(); // 선택된 날짜 (열림 + 마감 모두 포함)
+  let closedDates   = new Set(); // 마감된 날짜
+  let reservedMap   = new Map(); // date → 예약 수
   let reservations  = [];
 
-  /* ── 초기 로드 ── */
   async function loadAll() {
-    // 예약 가능 날짜 로드
     const cfgSnap = await getDoc(doc(db, 'settings', 'config'));
-    selectedDates = new Set(cfgSnap.exists() ? (cfgSnap.data().availableDates || []) : []);
-
-    // 예약 목록 로드 + reservedDates 빌드 ★
+    if (cfgSnap.exists()) {
+      selectedDates = new Set(cfgSnap.data().availableDates || []);
+      closedDates   = new Set(cfgSnap.data().closedDates   || []);
+    }
     const resSnap = await getDocs(collection(db, 'reservations'));
-    reservations  = [];
-    reservedDates = new Map();
+    reservations = []; reservedMap = new Map();
     resSnap.forEach(d => {
       const data = d.data();
       reservations.push({ id: d.id, date: data.date, name: data.name, createdAt: data.createdAt });
-      reservedDates.set(data.date, (reservedDates.get(data.date) || 0) + 1);
+      reservedMap.set(data.date, (reservedMap.get(data.date) || 0) + 1);
     });
-
-    // 예약 있는 날짜는 자동으로 selectedDates에 포함 (항상 열려있어야 하므로)
-    reservedDates.forEach((_, dt) => selectedDates.add(dt));
-
-    reservations.sort((a, b) => {
-      if (a.date !== b.date) return a.date.localeCompare(b.date);
-      return (a.createdAt?.seconds||0) - (b.createdAt?.seconds||0);
-    });
-
+    // 예약 있는 날짜는 자동으로 selectedDates에 포함
+    reservedMap.forEach((_, dt) => selectedDates.add(dt));
+    reservations.sort((a,b) => a.date !== b.date ? a.date.localeCompare(b.date) : (a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
     renderCalendar();
+    renderDateList();
     renderReservations();
   }
 
@@ -353,103 +236,128 @@
     document.getElementById('calYear').textContent    = viewYear + '년';
     document.getElementById('calKo').textContent      = MONTHS_KO[viewMonth];
     document.getElementById('calMonthEn').textContent = MONTHS_EN[viewMonth].toUpperCase();
-
     const grid = document.getElementById('daysGrid');
     grid.innerHTML = '';
-
     const firstWd   = new Date(viewYear, viewMonth, 1).getDay();
     const totalDays = new Date(viewYear, viewMonth + 1, 0).getDate();
 
     for (let i = 0; i < firstWd; i++) {
-      const cell = document.createElement('div');
-      cell.className = 'day-cell';
-      cell.appendChild(document.createElement('div')).className = 'day-circle';
-      grid.appendChild(cell);
+      const c = document.createElement('div'); c.className = 'day-cell';
+      c.appendChild(Object.assign(document.createElement('div'), {className:'day-circle'}));
+      grid.appendChild(c);
     }
 
     for (let d = 1; d <= totalDays; d++) {
-      const dateStr    = `${viewYear}-${pad(viewMonth+1)}-${pad(d)}`;
-      const dateObj    = new Date(viewYear, viewMonth, d);
-      const isToday    = dateObj.getTime() === today.getTime();
-      const isPast     = dateObj < today;
-      const isReserved = reservedDates.has(dateStr);   // ★ 예약 있는 날짜
-      const isSelected = selectedDates.has(dateStr);
-      const isSun      = dateObj.getDay() === 0;
+      const ds      = `${viewYear}-${pad(viewMonth+1)}-${pad(d)}`;
+      const dateObj = new Date(viewYear, viewMonth, d);
+      const isPast  = dateObj < today;
+      const isToday = dateObj.getTime() === today.getTime();
+      const hasBkg  = reservedMap.has(ds);
+      const isSel   = selectedDates.has(ds);
+      const isClosed= closedDates.has(ds);
+      const isSun   = dateObj.getDay() === 0;
 
       const cell   = document.createElement('div');
       const circle = document.createElement('div');
-      circle.className  = 'day-circle';
+      circle.className = 'day-circle';
       circle.textContent = d;
 
       let cellClass = 'day-cell';
-      if (isSun)    cellClass += ' is-sun';
-      if (isToday)  cellClass += ' is-today';
+      if (isSun)   cellClass += ' is-sun';
+      if (isToday) cellClass += ' is-today';
+      if (hasBkg)  cellClass += ' has-res';
 
       if (isPast) {
-        // 지난 날짜
         cellClass += ' past';
-
-      } else if (isReserved) {
-        // ★ 예약 있는 날짜 — 잠금 처리
-        cellClass += ' reserved';
-        const badge = document.createElement('div');
-        badge.className   = 'res-badge';
-        badge.textContent = reservedDates.get(dateStr) + '명';
-        cell.appendChild(circle);
-        cell.className = cellClass;
-        cell.appendChild(badge);
-        grid.appendChild(cell);
-        continue;   // 아래 로직 건너뜀
-
-      } else if (isSelected) {
-        // 선택됨 (예약 없음) — 클릭으로 해제 가능
-        cellClass += ' selected';
-        circle.addEventListener('click', () => toggleDate(dateStr));
-
       } else {
-        // 미선택 미래 날짜 — 클릭으로 선택
-        cellClass += ' future';
-        circle.addEventListener('click', () => toggleDate(dateStr));
+        if (!isSel)        cellClass += ' state-none';
+        else if (!isClosed) cellClass += ' state-open';
+        else               cellClass += ' state-closed';
+
+        circle.addEventListener('click', () => cycleDate(ds));
+
+        if (isClosed) {
+          const lbl = document.createElement('div');
+          lbl.className = 'day-label'; lbl.textContent = '마감';
+          cell.appendChild(circle); cell.className = cellClass;
+          cell.appendChild(lbl); grid.appendChild(cell); continue;
+        }
       }
 
       cell.className = cellClass;
       cell.appendChild(circle);
       grid.appendChild(cell);
     }
-
-    renderSummary();
   }
 
-  /* ── 날짜 토글 ── */
-  function toggleDate(dateStr) {
-    if (reservedDates.has(dateStr)) return; // ★ 예약 있으면 토글 차단
-    if (selectedDates.has(dateStr)) {
-      selectedDates.delete(dateStr);
+  /* ── 날짜 상태 순환: none → open → closed → none (예약 있으면 none 생략) ── */
+  function cycleDate(ds) {
+    const hasBkg   = reservedMap.has(ds);
+    const isSel    = selectedDates.has(ds);
+    const isClosed = closedDates.has(ds);
+
+    if (!isSel) {
+      // none → open
+      selectedDates.add(ds); closedDates.delete(ds);
+    } else if (isSel && !isClosed) {
+      // open → closed (마감)
+      closedDates.add(ds);
     } else {
-      selectedDates.add(dateStr);
+      // closed → none (단, 예약 있으면 → open으로)
+      closedDates.delete(ds);
+      if (hasBkg) { /* 예약 있으면 open 유지, selectedDates 그대로 */ }
+      else        { selectedDates.delete(ds); }
     }
     renderCalendar();
+    renderDateList();
   }
 
-  /* ── 선택 요약 ── */
-  function renderSummary() {
-    const wrap = document.getElementById('selSummary');
-    const allSorted  = [...selectedDates].sort();
-    const freeDates  = allSorted.filter(dt => !reservedDates.has(dt));
-    const lockedDates = allSorted.filter(dt =>  reservedDates.has(dt));
+  /* ── 날짜 목록 (마감 관리) ── */
+  function renderDateList() {
+    const wrap   = document.getElementById('dateList');
+    const sorted = [...selectedDates].sort();
+    wrap.innerHTML = '';
 
-    if (allSorted.length === 0) {
-      wrap.innerHTML = '<span class="sel-empty">선택된 날짜가 없어요. 캘린더에서 날짜를 눌러주세요.</span>';
-      return;
+    if (sorted.length === 0) {
+      wrap.innerHTML = '<div class="empty-list">선택된 날짜가 없어요</div>'; return;
     }
 
-    const freeChips   = freeDates.map(dt   => `<span class="sel-chip">${shortDate(dt)}</span>`).join('');
-    const lockedChips = lockedDates.map(dt => `<span class="res-chip">🔒 ${shortDate(dt)}</span>`).join('');
+    sorted.forEach(ds => {
+      const isClosed = closedDates.has(ds);
+      const cnt      = reservedMap.get(ds) || 0;
+      const hasRes   = cnt > 0;
 
-    wrap.innerHTML = `
-      <strong>총 ${allSorted.length}개 선택됨</strong>
-      <div class="sel-list">${freeChips}${lockedChips}</div>
-    `;
+      const row = document.createElement('div');
+      row.className = `date-row ${isClosed ? 'row-closed' : hasRes ? 'row-locked' : 'row-open'}`;
+
+      const lbl = document.createElement('div');
+      lbl.className = 'row-label' + (isClosed ? ' is-closed' : '');
+      lbl.textContent = fmtKo(ds);
+
+      const cntEl = document.createElement('div');
+      cntEl.className = 'row-cnt' + (cnt > 0 ? ' has-cnt' : '');
+      cntEl.textContent = cnt > 0 ? `${cnt}명 예약` : '예약 없음';
+
+      const btn = document.createElement('button');
+      btn.className = 'btn-toggle';
+
+      if (isClosed) {
+        btn.className += ' btn-open-it';
+        btn.textContent = '다시 열기';
+        btn.addEventListener('click', () => { closedDates.delete(ds); renderCalendar(); renderDateList(); });
+      } else if (hasRes) {
+        btn.className += ' btn-close-it';
+        btn.textContent = '마감하기';
+        btn.addEventListener('click', () => { closedDates.add(ds); renderCalendar(); renderDateList(); });
+      } else {
+        btn.className += ' btn-close-it';
+        btn.textContent = '마감하기';
+        btn.addEventListener('click', () => { closedDates.add(ds); renderCalendar(); renderDateList(); });
+      }
+
+      row.append(lbl, cntEl, btn);
+      wrap.appendChild(row);
+    });
   }
 
   /* ── 저장 ── */
@@ -457,91 +365,57 @@
     const btn = document.getElementById('saveBtn');
     btn.disabled = true; btn.textContent = '저장 중…';
     try {
-      await setDoc(doc(db, 'settings', 'config'), {
-        availableDates: [...selectedDates].sort()
+      await setDoc(doc(db,'settings','config'), {
+        availableDates: [...selectedDates].sort(),
+        closedDates:    [...closedDates].sort()
       });
       btn.textContent = '저장하기'; btn.disabled = false;
       const n = document.getElementById('saveNotice');
       n.textContent = '✓ 저장 완료!';
       setTimeout(() => { n.textContent = ''; }, 2500);
-    } catch(err) {
-      console.error(err);
-      btn.textContent = '저장하기'; btn.disabled = false;
-      alert('저장 중 오류가 발생했어요.');
-    }
+    } catch(e) { console.error(e); btn.textContent='저장하기'; btn.disabled=false; alert('저장 오류'); }
   });
 
-  /* ── 월 네비게이션 ── */
-  document.getElementById('prevBtn').addEventListener('click', () => {
-    viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
-    renderCalendar();
-  });
-  document.getElementById('nextBtn').addEventListener('click', () => {
-    viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; }
-    renderCalendar();
-  });
+  document.getElementById('prevBtn').addEventListener('click', () => { viewMonth--; if(viewMonth<0){viewMonth=11;viewYear--;} renderCalendar(); });
+  document.getElementById('nextBtn').addEventListener('click', () => { viewMonth++; if(viewMonth>11){viewMonth=0;viewYear++;} renderCalendar(); });
 
-  /* ── 예약 현황 렌더 ── */
+  /* ── 예약 현황 ── */
   function renderReservations() {
-    document.getElementById('resSummary').innerHTML =
-      `총 <strong>${reservations.length}명</strong> 신청`;
+    document.getElementById('resSummary').innerHTML = `총 <strong>${reservations.length}명</strong> 신청`;
     const tbody = document.getElementById('resBody');
-    if (reservations.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" class="no-res">아직 예약이 없어요 ☁️</td></tr>';
-      return;
-    }
+    if (!reservations.length) { tbody.innerHTML='<tr><td colspan="4" class="no-res">아직 예약이 없어요 ☁️</td></tr>'; return; }
     tbody.innerHTML = '';
-    let lastDate = null;
-    reservations.forEach(res => {
-      if (res.date !== lastDate) {
-        lastDate = res.date;
-        const cnt = reservations.filter(r => r.date === res.date).length;
-        const gr = document.createElement('tr');
-        gr.className = 'group-row';
-        gr.innerHTML = `<td colspan="4">📅 ${fmtKo(res.date)} — ${cnt}명</td>`;
-        tbody.appendChild(gr);
+    let last = null;
+    reservations.forEach(r => {
+      if (r.date !== last) {
+        last = r.date;
+        const cnt = reservations.filter(x=>x.date===r.date).length;
+        const g=document.createElement('tr'); g.className='group-row';
+        g.innerHTML=`<td colspan="4">📅 ${fmtKo(r.date)} — ${cnt}명</td>`;
+        tbody.appendChild(g);
       }
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><span class="date-pill">${res.date}</span></td>
-        <td>${esc(res.name)}</td>
-        <td class="time-cell">${fmtTime(res.createdAt)}</td>
-        <td><button class="btn-del" data-id="${res.id}">삭제</button></td>
-      `;
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td><span class="date-pill">${r.date}</span></td><td>${esc(r.name)}</td><td class="time-cell">${fmtTime(r.createdAt)}</td><td><button class="btn-del" data-id="${r.id}">삭제</button></td>`;
       tbody.appendChild(tr);
     });
-    tbody.querySelectorAll('.btn-del').forEach(btn => {
-      btn.addEventListener('click', () => delRes(btn.dataset.id));
-    });
+    tbody.querySelectorAll('.btn-del').forEach(b=>b.addEventListener('click',()=>delRes(b.dataset.id)));
   }
 
   async function delRes(id) {
-    if (!confirm('이 예약을 삭제할까요?\n삭제 후 해당 날짜의 잠금이 풀릴 수 있어요.')) return;
-    try {
-      await deleteDoc(doc(db, 'reservations', id));
-      await loadAll(); // 전체 새로고침 (잠금 상태 재계산)
-    } catch(err) { console.error(err); alert('삭제 중 오류가 발생했어요.'); }
+    if (!confirm('예약을 삭제할까요?')) return;
+    try { await deleteDoc(doc(db,'reservations',id)); await loadAll(); }
+    catch(e) { console.error(e); alert('삭제 오류'); }
   }
 
-  /* ── 유틸 ── */
-  function pad(n)  { return String(n).padStart(2,'0'); }
-  function shortDate(dateStr) {
-    const [, m, d] = dateStr.split('-');
-    return `${Number(m)}/${Number(d)}`;
-  }
-  function fmtKo(dateStr) {
-    const [y, m, d] = dateStr.split('-');
-    return `${y}년 ${Number(m)}월 ${Number(d)}일`;
-  }
+  function pad(n) { return String(n).padStart(2,'0'); }
+  function fmtKo(ds) { const[y,m,d]=ds.split('-'); return `${y}년 ${+m}월 ${+d}일`; }
   function fmtTime(ts) {
-    if (!ts) return '—';
-    const dt = ts.toDate ? ts.toDate() : new Date(ts.seconds * 1000);
-    const p  = n => String(n).padStart(2,'0');
+    if(!ts) return '—';
+    const dt=ts.toDate?ts.toDate():new Date(ts.seconds*1000);
+    const p=n=>String(n).padStart(2,'0');
     return `${dt.getFullYear()}.${p(dt.getMonth()+1)}.${p(dt.getDate())} ${p(dt.getHours())}:${p(dt.getMinutes())}`;
   }
-  function esc(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
   loadAll();
 </script>
